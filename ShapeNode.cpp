@@ -1,5 +1,5 @@
 //
-//  Shape.cpp
+//  ShapeNode.cpp
 //  Lab4
 //
 //  Created by Tarek Abdelrahman on 2020-10-25.
@@ -10,6 +10,6 @@
 //  this code, either publicly or to third parties.
 
 //  ECE244 Student:
-//  Write the implementation (and only the implementation) of the Shape class below
+//  Write the implementation (and only the implementation) of the ShapeNode class below
 
 
