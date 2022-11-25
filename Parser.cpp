@@ -1,68 +1,83 @@
 //
-//  parser.cpp
-//  Lab4
+//  Parser.cpp
+//  Lab5
 //
-//  Created by Tarek Abdelrahman on 2020-10-25.
+//  Created by Tarek Abdelrahman on 2020-11-25.
 //  Copyright © 2020 Tarek Abdelrahman.
 //
 //  Permission is hereby granted to use this code in ECE244 at
 //  the University of Toronto. It is prohibited to distribute
 //  this code, either publicly or to third parties.
 
+// This is the main function of the program. It should include the
+// command parser functions for the various shapes. One example for
+// the circle shape is given, which you should mimic for the other
+// shapes
+
+// The main function does three key things
+//      1. It creates a database for up to 1000 shapes and up to 10 shape types
+//      2. It registers your command parser call-back functions with the database
+//      3. It invokes the command parser method of the database
 
 #include <iostream>
-#include <sstream>
-#include <string>
-
 using namespace std;
+#include <sstream>
 
-#include "globals.h"
 #include "Shape.h"
-#include "ShapeNode.h"
-#include "GroupNode.h"
-#include "ShapeList.h"
-#include "GroupList.h"
+#include "ShapesDB.h"
 
-// This is a pointer to the groups list
-// The list itseld must be allocated
-GroupList* gList;
+#include "Circle.h"
 
-// ECE244 Student: you may want to add the prototype of
-// helper functions you write here
+#define MAX_SHAPES 1000
+#define MAX_SHAPE_TYPES 10
 
-int main() {
-    // Create the groups list
-    gList = new GroupList();
+// Create a database instance; making it global to simplify student code
+ShapesDB sdb(MAX_SHAPES,MAX_SHAPE_TYPES);
+
+// ECE244 Student: add your parser function prototypes here
+Shape* parseCircleCommand(stringstream& line);
+
+int main () {
+
+    // Register the command parser call back functions
+    sdb.registerShapeType("circle", &parseCircleCommand);
     
-    // Create the poo group and add it to the group list
-    GroupNode* poolGroup = new GroupNode(keyWordsList[NUM_KEYWORDS-1]);
-    gList->insert(poolGroup);
+    // Invoke the parser of the DB
+    // No new commands should be registered after this
+    sdb.parseCommands();
     
-    string line;
-    string command;
-    
-    cout << "> ";         // Prompt for input
-    getline(cin, line);    // Get a line from standard input
+    // Done
+    return (0);
+}
 
-    while ( !cin.eof () ) {
-        // Put the line in a linestream for parsing
-        // Making a new sstream for each line so flags etc. are cleared
-        stringstream lineStream (line);
-        
-        // Read from string stream into the command
-        // The only way this can fail is if the eof is encountered
-        lineStream >> command;
-
-        // Check for the command and act accordingly
-        // ECE244 Student: Insert your code here
-        
-        // Once the command has been processed, prompt for the
-        // next command
-        cout << "> ";          // Prompt for input
-        getline(cin, line);
-        
-    }  // End input loop until EOF.
+Shape* parseCircleCommand(stringstream& line) {
+    string name;
+    float xcent;
+    float ycent;
+    float radius;
+    line >> name >> xcent >> ycent >> radius;
     
-    return 0;
+    // Do a simple error check
+    if (line.fail()) {
+        cout << "Error: invalid input" << endl;
+        return nullptr;
+    }
+    
+    // Check to see if name is a reserved word
+    if (sdb.isReserved(name)) {
+        cout << "Error: " << name << " is a reserved word" << endl;
+        return nullptr;
+    }
+    
+    // Check if a shape with this name already exists
+    if (sdb.shapeExists(name)) {
+        cout << "Error: a shape with the name " << name << " already exists" << endl;
+        return nullptr;
+    }
+
+    // Create the shape object and return a pointer to it
+    Shape* myShape = (Shape*) new Circle(name, xcent, ycent, radius);
+    cout << "created circle" << endl;
+    return myShape;
 }
 

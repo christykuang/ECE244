@@ -1,8 +1,8 @@
 //
 //  Shape.h
-//  Lab4
+//  Lab5
 //
-//  Created by Tarek Abdelrahman on 2020-10-25.
+//  Created by Tarek Abdelrahman on 2020-11-25.
 //  Copyright © 2020 Tarek Abdelrahman.
 //
 //  Permission is hereby granted to use this code in ECE244 at
@@ -18,44 +18,42 @@
 #include <string>
 using namespace std;
 
-// This class represents a shape in the program
-// It stores the name, type, location and size
-// of the shape
+// This class is a base class for shapes in the program
+// It holds variables/methods that are common to all shapes
+// It is also an abstract class, so no objects of type Shape can be created
+// It also contains virtual methods that must be overridden in derived classes
 
 class Shape {
-private:
+protected:
     string name;                   // The name of the shape
-    string type;                   // The type of the shape (see globals.h)
-    int x_location;                // The location of the shape on the x-axis
-    int y_location;                // The location of the shape on the y-axis
-    int x_size;                    // The size of the shape in the x-dimension
-    int y_size;                    // The size of the shape in the y-dimension
+    float x_centre;                // The centre of the shape on the x-axis
+    float y_centre;                // The centre of the shape on the y-axis
+
+   // Constructor is protected, so it can only be invoked from derived shape
+   // classes as part of building a derived object. No other classes can
+   // create a Shape anyway, since it is an abstract base class
+   Shape (string n, float xcent, float ycent);
+
 public:
-    // Build a Shape object with its properties
-    Shape(string n, string t, int x_loc, int y_loc, int x_sz, int y_sz);
-    
     // Accessors
-    string getType();              // Returns the type
-    string getName();              // Returns the name of the shape
-    int getXlocation();            // Returns location of the shape on the x-axis
-    int getYlocation();            // Returns location of the shape on the y-axis
-    int getXsize();                // Returns the size of the shape in the x-dimension
-    int getYsize();                // Returns the size of the shape in the y-dimension
-    
+    string getName() const;                // Returns the name of the shape
+    float getXCentre() const;              // Returns centre of the shape on the x-axis
+    float getYCentre() const;              // Returns centre of the shape on the y-axis
+
     // Mutators
-    void setType(string t);        // Sets the type (see globals.h)
-                                   // No error checking done inside the method
-                                   // The calling program must ensure the type
-                                   // is correct
-    void setName(string n);        // Sets the name of the shape
-    void setXlocation(int x_loc);  // Sets location of the shape on the x-axis
-    void setYlocation(int y_loc);  // Sets location of the shape on the y-axis
-    void setXsize(int x_sz);       // Sets size of the shape in the x-dimension
-    void setYsize(int y_sz);       // Sets size of the shape in the y-dimension
+    void setName(string n);                // Sets the name of the shape
+    void setXCentre(float xcent);          // Sets centre of the shape on the x-axis
+    void setYCentre(float ycent);          // Sets centre of the shape on the y-axis
     
     // Utility methods
-    void draw();                   // Draws a shape; for this assignment it
-                                   // only prints the information of the shape
+    virtual void draw() const = 0 ;        // Draws a shape; for the assignment it
+                                           // prints the information of the shape
+    
+    virtual float computeArea() const = 0; // Computes the area of the shape
+    
+    virtual ~Shape();                      // Virtual destructor
+    
+    virtual Shape* clone() const = 0;      // This method clones the object
 };
 
 #endif /* Shape_h */
